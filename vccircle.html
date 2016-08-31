@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html" />
+	<meta name="author" content="suman" />
+
+	<title>Problem</title>
+</head>
+
+<body>
+<div style="background-color: black;color: #fff;">Collatz Problem</div>
+<br />
+<input type="button" value="Solution of Collatz Problem" onclick="grdy();" />
+<div id="collatz"></div>
+
+<br />
+<br />
+<div style="background-color: black;color: #fff;">Egyptian fraction</div>
+<br />
+
+numerator <input type="text" id="nr" /> <br /><br />
+denominator <input type="text" id="dr" /> <br /><br />
+<input type="button" value="Find Egyptian fraction" onclick="callEgypt();" />
+<div id="egyptian"></div>
+
+
+<br />
+<br />
+<br />
+
+<div style="background-color: black;color: #fff;">Hash Table</div>
+<br />
+<br />
+Key
+<input type="text" id="k" />
+<br /><br />
+Value
+<input type="text" id="v" />
+<br /><br />
+
+<input type="button" value="Add (please enter key and value)" onclick="addme();" /><br /><br />
+<input type="button" value="Remove (please enter key only)" onclick="deleteme();" /><br /><br />
+<input type="button" value="Find (please enter key only)" onclick="findme();" /><br /><br />
+
+<input type="button" value="Show Status" onclick="showstatus();" />
+<br />
+
+<div id="status"></div>
+<br />
+
+
+</body>
+</html>
+
+<script>
+    function even(n) {
+        return n/2;
+    }
+    
+    function odd(n) {
+        return 3*n + 1;
+    }
+    
+    function collatz(n) {
+        var a = [n];
+        while ( n != 1 ) {
+            if ( n % 2 == 0 ) {
+                n = even(n);
+            } else {
+                n = odd(n);
+            }
+            a.push(n);
+        }
+        return a;
+    }
+    
+    function grdy(){
+    var maxLen = 0;
+    var f = new Array;
+    var b = new Array;
+    var l;
+    
+    for (var i=1; i < 1000000; i++){
+        b = collatz(i);
+        //console.log(b);//83779
+        l = b.length;
+        if ( l > maxLen ) {
+            maxLen = l;
+            f = b
+        }
+    }
+    
+    document.getElementById('collatz').innerHTML=f[0];
+    alert("number: " + f[1]);
+    }
+    
+    
+    
+    function  printEgyptian(nr, dr)
+{
+    
+    // If either numerator or denominator is 0
+    if (dr == 0 || nr == 0)
+    {
+        //alert("error");
+        return;
+        }
+ 
+    // If numerator divides denominator, then simple division
+    // makes the fraction in 1/n form
+    if (dr%nr == 0)
+    {
+        document.getElementById('egyptian').innerHTML+="1/"+Math.round(dr/nr);//console.log("1/"+dr/nr);
+        return;
+    }
+ 
+    // If denominator divides numerator, then the given number
+    // is not fraction
+    if (nr%dr == 0)
+    {
+        
+        return;
+    }
+ 
+    // If numerator is more than denominator
+    if (nr > dr)
+    {
+        //document.getElementById('egyptian').innerHTML+=nr/dr +" + ";//console.log(nr/dr +" + ");
+        printEgyptian(nr%dr, dr);
+        return;
+    }
+ 
+    // We reach here dr > nr and dr%nr is non-zero
+    // Find ceiling of dr/nr and print it as first
+    // fraction
+    var n = dr/nr + 1;
+    document.getElementById('egyptian').innerHTML+="1/"+ Math.round(n) + " + ";//console.log("1/"+ n + " + ");
+ 
+    // Recur for remaining part
+    printEgyptian(nr*n-dr, dr*n);
+ }
+//printEgyptian(8,11);
+
+function callEgypt()
+{
+    //alert("vvv");
+    document.getElementById('egyptian').innerHTML="";
+if(document.getElementById('nr').value=="")
+{
+    alert("please fill something");
+    return false;
+}
+if(document.getElementById('dr').value=="")
+{
+    alert("please fill something");
+    return false;
+}    
+printEgyptian(document.getElementById('nr').value,document.getElementById('dr').value);    
+}
+    
+    //result = calc(2,3);
+    //console.log(result);
+    //console.log(result.map(prettyfrac));
+    
+    
+function HashTable(obj)
+{
+    this.length = 0;
+    this.items = {};
+    for (var p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            this.items[p] = obj[p];
+            this.length++;
+        }
+    }
+
+    this.setItem = function(key, value)
+    {
+        var previous = undefined;
+        if (this.hasItem(key)) {
+            previous = this.items[key];
+        }
+        else {
+            this.length++;
+        }
+        this.items[key] = value;
+        return previous;
+    }
+
+    this.getItem = function(key) {
+        return this.hasItem(key) ? this.items[key] : undefined;
+    }
+
+    this.hasItem = function(key)
+    {
+        return this.items.hasOwnProperty(key);
+    }
+   
+    this.removeItem = function(key)
+    {
+        if (this.hasItem(key)) {
+            previous = this.items[key];
+            this.length--;
+            delete this.items[key];
+            return previous;
+        }
+        else {
+            return undefined;
+        }
+    }
+
+    this.keys = function()
+    {
+        var keys = [];
+        for (var k in this.items) {
+            if (this.hasItem(k)) {
+                keys.push(k);
+            }
+        }
+        return keys;
+    }
+
+    this.values = function()
+    {
+        var values = [];
+        for (var k in this.items) {
+            if (this.hasItem(k)) {
+                values.push(this.items[k]);
+            }
+        }
+        return values;
+    }
+
+    this.each = function(fn) {
+        for (var k in this.items) {
+            if (this.hasItem(k)) {
+                fn(k, this.items[k]);
+            }
+        }
+    }
+
+    this.clear = function()
+    {
+        this.items = {}
+        this.length = 0;
+    }
+}
+   
+
+var h = new HashTable();
+
+function addme()
+{
+    var k=document.getElementById('k').value;
+    var v=document.getElementById('v').value;
+    h.setItem(k,v);
+    alert("added, click on status button to find status");
+    
+}
+function deleteme()
+{
+    var k=document.getElementById('k').value;
+    h.removeItem(k);
+    alert("deleted, click on status button to find status");
+}
+function findme()
+{
+    var k=document.getElementById('k').value;
+    var res=h.getItem(k);
+    alert(res);
+}
+function showstatus()
+{document.getElementById('status').innerHTML="";
+    h.each(function(k, v) {
+    document.getElementById('status').innerHTML+='key is: ' + k + ', value is: ' + v+"<br>";
+});
+    
+}
+
+
+
+    
+    
+   
+</script> 
